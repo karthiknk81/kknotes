@@ -1,7 +1,22 @@
 # Definitive guide for deploying Terraform on AKS using secretless Azure Workload Identity authentication.
 
 
-## 1. Architectural Overview
+
+In this guide, we are going to build a completely **secretless Terraform pipeline directly inside an Azure Kubernetes Service (AKS) cluster**. By leveraging Azure Workload Identity and Kubernetes Service Accounts, your pod will automatically authenticate with Azure Entra ID using short-lived OIDC tokens. Say goodbye to hardcoded client secrets, expired passwords, and credential leaks—by the time you finish this guide, you'll have a clean, production-ready prototype environment that deploys Azure infrastructure safely and seamlessly.
+
+---
+
+### What We’ll Cover
+
+* **Architecture Overview:** How OIDC, AKS, and Azure Entra ID talk to each other without static secrets.
+* **Prerequisites & Azure Setup:** Configuring the Managed Identity, OIDC Issuer, and Federated Credentials.
+* **Kubernetes Manifests:** Setting up the dedicated ServiceAccount and Pod manifest with proper volume mounts.
+* **Terraform Configuration:** Configuring the `azurerm` provider to handle OIDC authentication smoothly.
+* **Execution & Verification:** Testing your secretless pipeline with `terraform init` and `terraform plan`.
+* **Troubleshooting Cheat Sheet:** Quick fixes for common environment variable and provider authorization pitfalls.
+
+## Architectural Overview
+
 
 The system relies on three layers working in sync:
 
@@ -49,7 +64,7 @@ flowchart TD
 
 ---
 
-## 2. Infrastructure Setup (One-Time Cluster & Identity Config)
+## Stage 1: Infrastructure Setup (One-Time Cluster & Identity Config)
 
 ### Step 1: Enable OIDC and Workload Identity on AKS
 
